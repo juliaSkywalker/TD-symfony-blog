@@ -43,12 +43,25 @@ class CategoryController extends AbstractController
      */
     public function edit(Request $request)
     {
+        $em = $this->getDoctrine()->getManager();
         $categorie = new Category();
         $form = $this->createForm(CategoryType::class, $categorie);
         //formulaire analyse la requête http
         $form->handleRequest($request);
         //si le formulaire a été envoyé
         if ($form->isSubmitted()) {
+            //si mon form est valide à partir des annotation dans l'entité Catégory son ok
+            if($form->isValid()){
+                //enregistrement de la catégorie dans la bdd
+                $em->persist($categorie);
+                $em->flush();
+                //message de confirmation
+                $this->addFlash('success','La catégorie est crée');
+                //redirection vers la liste
+                return $this->redirectToRoute('app_admin_category_index');
+            }else{
+                $this->addFlash('error', 'Le formulaire contient des erreurs.');
+            }
 
         }
 
