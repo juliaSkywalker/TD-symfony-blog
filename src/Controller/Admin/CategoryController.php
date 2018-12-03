@@ -13,6 +13,7 @@ use App\Entity\Category;
 use App\Form\CategoryType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -39,27 +40,42 @@ class CategoryController extends AbstractController
     }
 
     /**
-     * @Route("/edition")
+     * {id} est optionnel et doit être un nombre
+     * @Route("/edition/{id}", defaults={"id":null}, requirements={"id":"\d+"})
      */
-    public function edit(Request $request)
+    public function edit(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
-        $categorie = new Category();
-        $form = $this->createForm(CategoryType::class, $categorie);
+
+        if (is_null($id)) {//creation
+
+            $category = new Category();
+
+        } else {//modification
+
+            $category = $em->find(Category::class, $id);
+            //404 si l'id reçu dans l'url n'est pas en bdd
+            if (is_null($category)) {
+                throw new NotFoundHttpException();
+            }
+        }
+
+        $form = $this->createForm(CategoryType::class, $category);
         //formulaire analyse la requête http
         $form->handleRequest($request);
         //si le formulaire a été envoyé
         if ($form->isSubmitted()) {
             //si mon form est valide à partir des annotation dans l'entité Catégory son ok
-            if($form->isValid()){
+            if ($form->isValid()) {
                 //enregistrement de la catégorie dans la bdd
-                $em->persist($categorie);
+                $em->persist($category);
                 $em->flush();
                 //message de confirmation
-                $this->addFlash('success','La catégorie est crée');
+                $this->addFlash('success', 'La catégorie est crée');
                 //redirection vers la liste
                 return $this->redirectToRoute('app_admin_category_index');
-            }else{
+            } else {
+                //message d'erreur
                 $this->addFlash('error', 'Le formulaire contient des erreurs.');
             }
 
@@ -72,5 +88,16 @@ class CategoryController extends AbstractController
 
     }
 
+    /**
+     * @Route("/suppression/{id}")
+     */
+    public function delete(Category $category)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($category);
+        $em->flush();
+        $this->addFlash('success', 'La catégorie est supprimée');
 
+        return $this->redirectToRoute('app_admin_category_index');
+    }
 }
