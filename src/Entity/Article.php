@@ -3,12 +3,14 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ArticleRepository")
  */
 class Article
 {
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -18,11 +20,13 @@ class Article
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank()
      */
     private $content;
 
@@ -34,8 +38,9 @@ class Article
 
     /**
      * @var Category
-     * @ORM\ManyToOne(targetEntity="Category")
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="article")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotBlank()
      */
     private $category;
 
@@ -46,6 +51,31 @@ class Article
      */
     private $author;
 
+    /**
+     * @ORM\Column(type="string",nullable=true)
+     * @Assert\Image(maxSize="1M",
+     * maxSizeMessage="Le Fichier ne doit pas faire plus de 1M",
+     * mimeTypesMessage="Le fichier doit être une image")
+     */
+    private $image;
+
+    /**
+     * @return mixed
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * @param mixed $image
+     * @return Article
+     */
+    public function setImage($image)
+    {
+        $this->image = $image;
+        return $this;
+    }
 
     public function getId(): ?int
     {
@@ -55,7 +85,7 @@ class Article
     /**
      * @return Category
      */
-    public function getCategory(): Category
+    public function getCategory(): ?Category
     {
         return $this->category;
     }
@@ -73,7 +103,7 @@ class Article
     /**
      * @return User
      */
-    public function getAuthor(): User
+    public function getAuthor(): ?User
     {
         return $this->author;
     }
@@ -123,4 +153,5 @@ class Article
 
         return $this;
     }
+
 }

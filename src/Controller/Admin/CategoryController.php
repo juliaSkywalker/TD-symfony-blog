@@ -94,9 +94,20 @@ class CategoryController extends AbstractController
     public function delete(Category $category)
     {
         $em = $this->getDoctrine()->getManager();
-        $em->remove($category);
-        $em->flush();
-        $this->addFlash('success', 'La catégorie est supprimée');
+//        $repository = $em->getRepository(Category::class);
+//        $repository->findOneBy(
+//            [
+//                "name" => $article->getCategory()
+//            ]
+//
+//        );
+        if ($category->getArticle()->count() == 0) {
+            $em->remove($category);
+            $em->flush();
+            $this->addFlash('success', 'La catégorie est supprimée');
+        } else {
+            $this->addFlash('error', 'Impossible de supprimer une catégorie utilisé par un ou plusieurs articles');
+        }
 
         return $this->redirectToRoute('app_admin_category_index');
     }
