@@ -58,6 +58,7 @@ class User implements UserInterface, \Serializable
      */
     private $plainPassword;
 
+
     /**
      * @return string
      */

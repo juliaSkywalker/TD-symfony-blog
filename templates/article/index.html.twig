@@ -3,5 +3,53 @@
 
 
 {% block body %}
+
     <h1>{{ article.title }}</h1>
+    <p>
+
+        Par {{ article.author }},
+        <em class="">{{ article.publicationDate|date('d/m/Y H:i') }}</em><br>
+        <strong>Dans {{ article.category }}</strong>
+    </p>
+
+    {% if article.image is not null %}
+        <div class="text-center">
+            <img src="{{ asset('/images/' ~ article.image) }} ">
+        </div>
+    {% endif %}
+
+    <p>{{ article.content|nl2br }}</p>
+
+    {% if app.user is not null %}
+        <div>
+            {#ouvre la balise form #}
+            {{ form_start(form) }}
+
+            {#Bloc de formulaire pour l'attribut name#}
+
+            {{ form_row(form.content) }}
+
+
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </div>
+
+            {#ferme la balise form #}
+            {{ form_end(form) }}
+        </div>
+    {% endif %}
+
+
+    <h3>Commentaires d'articles</h3>
+
+    {% for comment in article.comment %}
+
+        Par {{ comment.user }},
+        <em class="">{{ comment.publicationDate|date('d/m/Y H:i') }}</em><br>
+        </p>
+        <p>
+            {{ comment.content }}
+        </p>
+    {% endfor %}
+
 {% endblock %}

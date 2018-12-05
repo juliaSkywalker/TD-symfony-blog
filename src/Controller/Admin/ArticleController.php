@@ -33,7 +33,13 @@ class ArticleController extends AbstractController
 
         $em = $this->getDoctrine()->getManager();
         $repository = $em->getRepository(Article::class);
-        $articles = $repository->findBy([], ['publicationDate' => 'DESC']);
+        $articles = $repository->findBy([], [
+            'publicationDate' => 'DESC',
+        ]);
+
+
+
+
         return $this->render('admin/article/index.html.twig', [
                 'articles' => $articles
 
@@ -98,7 +104,8 @@ class ArticleController extends AbstractController
                 //s'il y a une image uploadée
                 if (!is_null($image)) {
                     //nom de l'image dans notre application
-                    $filename = uniqid() . '.' . $image->guessExtension();
+
+
                     //équivalent  de move_uploaded_file()
                     $image->move(
                     //repertoire de destination
@@ -106,7 +113,6 @@ class ArticleController extends AbstractController
                         $this->getParameter('upload_dir'),
                         //le nom du fichier
                         $filename
-
                     );
                     //on sette l'attribut image de l'article avec le nom
                     //de l'iamge pour enregistrement en bdd

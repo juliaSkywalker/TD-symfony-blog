@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Article;
 use App\Entity\Category;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,9 +20,23 @@ class CategoryController extends AbstractController
      */
     public function index(Category $category)
     {
+        /**
+         *
+         * afficher les 5 derniers articles de la catégorie
+         * par ordre de date de publication croossante avec un lien vers la page article
+         */
+
+        $em = $this->getDoctrine()->getManager();
+        $repository = $em->getRepository(Article::class);
+
+
+        $articles = $repository->findBy(['category' => $category], ['publicationDate' => 'DESC'], $limit = 5);
+
+
         return $this->render(
             'category/index.html.twig', [
-            'category' => $category
+            'category' => $category,
+            'articles' => $articles
         ]);
     }
 

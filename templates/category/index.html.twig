@@ -4,4 +4,31 @@
 
 {% block body %}
     <h1>{{ category }}</h1>
+
+
+    <table class="table table-striped">
+        <tr>
+            <th>Id</th>
+            <th>Nom de l'article</th>
+            <th>Lien de l'article</th>
+        </tr>
+        {% for article in articles %}
+            <tr>
+                <td>{{ article.id }}</td>
+                <td>{{ article.title }}</td>
+                <td>
+                    <a class="nav-link"
+                       href="{{ path('app_article_index',{id:article.id}) }}">
+                        {{ category }}
+                    </a>
+                </td>
+            </tr>
+
+
+        {% endfor %}
+
+
+    </table>
+
+
 {% endblock %}

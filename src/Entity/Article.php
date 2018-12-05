@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -58,6 +59,32 @@ class Article
      * mimeTypesMessage="Le fichier doit être une image")
      */
     private $image;
+    /**
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="Comment", mappedBy="article")
+     * @ORM\OrderBy({"publicationDate":"desc"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $comment;
+
+
+    /**
+     * @return Collection
+     */
+    public function getComment(): Collection
+    {
+        return $this->comment;
+    }
+
+    /**
+     * @param Collection $comment
+     * @return Article
+     */
+    public function setComment(Collection $comment): Article
+    {
+        $this->comment = $comment;
+        return $this;
+    }
 
     /**
      * @return mixed
